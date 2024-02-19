@@ -1,33 +1,58 @@
-import { describe, it, expect, spyOn, mock, jest } from "bun:test";
-import * as vscode from "vscode";
+// import { describe, it, expect, spyOn, mock, jest, beforeEach } from "bun:test";
+// import * as vscode from "vscode";
+// import * as mockVSCode from "../mocks/vscode.ts";
 
-import { activate } from "./extension.ts";
+// mock.module("vscode", () => mockVSCode);
 
-spyOn(vscode.commands, "registerCommand");
-spyOn(vscode.window, "showInformationMessage");
+// import { activate } from "./extension.ts";
 
-const extensionContext: vscode.ExtensionContext = {
-  subscriptions: [],
-} as any;
+// spyOn(vscode.languages, "registerCompletionItemProvider");
 
-describe("extension", () => {
-  describe("activation", () => {
-    it("registers the hello world command", () => {
-      activate(extensionContext);
+// const extensionContext: vscode.ExtensionContext = {
+//   subscriptions: [],
+// } as any;
 
-      expect(vscode.commands.registerCommand).toHaveBeenCalled();
-      const command = (vscode.commands.registerCommand as jest.Mock).mock
-        .calls[0][0];
-      const callback = (vscode.commands.registerCommand as jest.Mock).mock
-        .calls[0][1] as any as Function;
+// describe("extension", () => {
+//   describe("activation", () => {
+//     describe("the completion item provider", () => {
+//       it("is applicable to graphql files", () => {
+//         activate(extensionContext);
 
-      expect(command).toEqual("bun-vscode-extension.helloworld");
+//         const selector = (
+//           vscode.languages.registerCompletionItemProvider as jest.Mock
+//         ).mock.calls[0][0];
 
-      expect(vscode.window.showInformationMessage).not.toHaveBeenCalled();
-      callback();
-      expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
-        "Hello World!"
-      );
-    });
-  });
-});
+//         expect(selector).toEqual("graphql");
+//       });
+
+//       it("is triggered on single and double quotes", () => {
+//         activate(extensionContext);
+
+//         const triggerCharacters = (
+//           vscode.languages.registerCompletionItemProvider as jest.Mock
+//         ).mock.calls[0].slice(2);
+
+//         expect(triggerCharacters).toEqual(['"', "'"]);
+//       });
+
+//       describe("provideCompletionItems", () => {
+//         let provideCompletionItems: Function;
+//         beforeEach(() => {
+//           activate(extensionContext);
+
+//           const provider = (
+//             vscode.languages.registerCompletionItemProvider as jest.Mock
+//           ).mock.calls[0][1];
+//           provideCompletionItems = provider.provideCompletionItems;
+//         });
+
+//         it("has the correct provider", () => {
+//           const document: vscode.TextDocument = new;
+//           const position: vscode.Position = {};
+//           const cancellationToken: vscode.CancellationToken = {};
+//           const completionContext: vscode.CompletionContext = {};
+//         });
+//       });
+//     });
+//   });
+// });

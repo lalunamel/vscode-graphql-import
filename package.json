@@ -33,14 +33,6 @@
     "type": "git",
     "url": "https://github.com/lalunamel/vscode-graphql-import"
   },
-  "contributes": {
-    "commands": [
-      {
-        "command": "lalunamel.graphql-import.helloworld",
-        "title": "Hello World"
-      }
-    ]
-  },
   "engines": {
     "vscode": "^1.86.0"
   },
