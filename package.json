@@ -25,23 +25,42 @@
     "clean": "rm -r ./dist"
   },
   "//": "START EXTENSION ATTRIBUTES",
-  "name": "vscode-graphql-import-2",
+  "name": "lalunamel.graphql-import",
   "version": "0.0.1",
-  "description": "Extension description",
-  "displayName": "Extension display name",
+  "description": "A vscode extension to help with finding the right path to use with the #import expression in graphql files.",
+  "displayName": "GraphQL #import",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOURNAME"
+    "url": "https://github.com/lalunamel/vscode-graphql-import"
   },
   "contributes": {
     "commands": [
       {
-        "command": "bun-vscode-extension.helloworld",
+        "command": "lalunamel.graphql-import.helloworld",
         "title": "Hello World"
       }
     ]
   },
   "engines": {
     "vscode": "^1.86.0"
-  }
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:graphql"
+  ],
+  "languages": [
+    {
+      "id": "graphql",
+      "extensions": [
+        ".gql",
+        ".graphql",
+        ".graphqls"
+      ],
+      "aliases": [
+        "GraphQL"
+      ]
+    }
+  ]
 }
