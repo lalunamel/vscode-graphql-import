@@ -8,6 +8,11 @@ const URI_SCHEME_FILE = "file";
 type AbsolutePath = string;
 type RelativePath = string;
 
+type File = {
+  name: string;
+  type: vscode.CompletionItemKind.Folder | vscode.CompletionItemKind.File;
+};
+
 /**
  * Whether or not completions should be returned
  *
@@ -64,12 +69,12 @@ const getCurrentFileDirectoryPath = (): AbsolutePath | undefined => {
 
 /**
  * Finds all .graphql files and all directories within a specified directory.
- * @param {string} path The directory in which to search for .graphql files and directories.
- * @returns {Promise<vscode.Uri[]>} A promise that resolves to an array of Uri objects pointing to .graphql files and directories.
+ * @param { AbsolutePath | undefined } path The directory in which to search for .graphql files and directories.
+ * @returns {Promise<File[]>} A promise that resolves to an array of Uri objects pointing to .graphql files and directories.
  */
-const findGraphqlFilesAndDirectories = async (
-  path: string | undefined
-): Promise<vscode.Uri[]> => {
+const findGraphqlFileAndDirectoryNames = async (
+  path: AbsolutePath | undefined
+): Promise<File[]> => {
   if (path === undefined) {
     return [];
   }
@@ -78,12 +83,19 @@ const findGraphqlFilesAndDirectories = async (
 
   try {
     const entries = await vscode.workspace.fs.readDirectory(dirUri);
-    const uris = entries
-      .filter(
-        ([name, type]) =>
-          type === vscode.FileType.Directory || name.endsWith(".graphql")
-      )
-      .map(([name]) => vscode.Uri.file(`${path}/${name}`));
+    const uris = entries.flatMap(([name, type]) =>
+      type === vscode.FileType.Directory || name.endsWith(".graphql")
+        ? [
+            {
+              name: name,
+              type:
+                type === vscode.FileType.Directory
+                  ? vscode.CompletionItemKind.Folder
+                  : vscode.CompletionItemKind.File,
+            } as File,
+          ]
+        : []
+    );
 
     return uris;
   } catch (error) {
@@ -122,18 +134,16 @@ const provideCompletionItems = async (
     }
 
     // Join the two to create a path to search for graphql files
-    const pathToSearch = path.join(currentFileDirectoryPath, enteredText);
+    const pathToSearch: AbsolutePath = path.join(
+      currentFileDirectoryPath,
+      enteredText
+    );
 
     // Get the GraphQL files and folders at that path
-    const files = await findGraphqlFilesAndDirectories(pathToSearch);
-    console.log(files);
-    // TODO: Also find folders at that path
+    const files = await findGraphqlFileAndDirectoryNames(pathToSearch);
 
-    // Get just the last part (i.e. basename) of the files that were returned
-    const fileNames = files.map((file) => path.basename(file.path));
-
-    const completionItems = fileNames.map(
-      (name) => new vscode.CompletionItem(name)
+    const completionItems = files.map(
+      (file) => new vscode.CompletionItem(file.name, file.type)
     );
     return completionItems;
   }
