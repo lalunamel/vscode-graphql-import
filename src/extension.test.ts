@@ -1,58 +1,80 @@
-// import { describe, it, expect, spyOn, mock, jest, beforeEach } from "bun:test";
-// import * as vscode from "vscode";
-// import * as mockVSCode from "../mocks/vscode.ts";
+import { describe, it, expect } from "bun:test";
+import {
+  getTextBetweenImportAndCursor,
+  shouldProvideCompletionItems,
+} from "./extension";
 
-// mock.module("vscode", () => mockVSCode);
+describe("extension", () => {
+  describe("shouldProvideCompletionItems", () => {
+    it.each([
+      ["|", false],
+      ["a|", false],
+      ["b|", false],
+      ["#import|", false],
+      ["#import |", false],
+      ['#import "|', true],
+      ["#import '|", true],
+      ["#|import '", false],
+      ["#import| '", false],
+      ["#import '|'", true],
+      [' #import "|', false],
+      ['# import "|', false],
+    ])(
+      'maybe returns true when the line is "%s"',
+      (line: string, expectedOutput: boolean) => {
+        const characterPosition = line.indexOf("|");
+        const text =
+          line.substring(0, characterPosition) +
+          line.substring(characterPosition + 1);
+        expect(shouldProvideCompletionItems(text, characterPosition)).toEqual(
+          expectedOutput
+        );
+      }
+    );
+  });
 
-// import { activate } from "./extension.ts";
+  // Functions exported purely for testing
+  describe("getPathBeforeCursor", () => {
+    describe("when the cursor is at the beginning", () => {
+      it("returns an empty string", () => {
+        const line = '#import "./foo/bar.graphql"';
+        const cursorPosition = 0;
 
-// spyOn(vscode.languages, "registerCompletionItemProvider");
+        expect(getTextBetweenImportAndCursor(line, cursorPosition)).toEqual("");
+      });
+    });
 
-// const extensionContext: vscode.ExtensionContext = {
-//   subscriptions: [],
-// } as any;
+    describe("when the cursor is in the middle", () => {
+      it("returns the first part of the path", () => {
+        const line = '#import "./foo/bar.graphql"';
+        const cursorPosition = line.indexOf("foo/ba") + "foo/ba".length;
 
-// describe("extension", () => {
-//   describe("activation", () => {
-//     describe("the completion item provider", () => {
-//       it("is applicable to graphql files", () => {
-//         activate(extensionContext);
+        expect(getTextBetweenImportAndCursor(line, cursorPosition)).toEqual(
+          "./foo/ba"
+        );
+      });
+    });
 
-//         const selector = (
-//           vscode.languages.registerCompletionItemProvider as jest.Mock
-//         ).mock.calls[0][0];
+    describe("when the cursor is at the end inside the quote", () => {
+      it("returns the entire path", () => {
+        const line = '#import "./foo/bar.graphql"';
+        const cursorPosition = line.indexOf("graphql") + "graphql".length;
 
-//         expect(selector).toEqual("graphql");
-//       });
+        expect(getTextBetweenImportAndCursor(line, cursorPosition)).toEqual(
+          "./foo/bar.graphql"
+        );
+      });
+    });
 
-//       it("is triggered on single and double quotes", () => {
-//         activate(extensionContext);
+    describe("when the cursor is at the end outside the quote", () => {
+      it("returns the entire path plus the ending quote", () => {
+        const line = '#import "./foo/bar.graphql"';
+        const cursorPosition = line.indexOf("graphql") + "graphql".length + 1;
 
-//         const triggerCharacters = (
-//           vscode.languages.registerCompletionItemProvider as jest.Mock
-//         ).mock.calls[0].slice(2);
-
-//         expect(triggerCharacters).toEqual(['"', "'"]);
-//       });
-
-//       describe("provideCompletionItems", () => {
-//         let provideCompletionItems: Function;
-//         beforeEach(() => {
-//           activate(extensionContext);
-
-//           const provider = (
-//             vscode.languages.registerCompletionItemProvider as jest.Mock
-//           ).mock.calls[0][1];
-//           provideCompletionItems = provider.provideCompletionItems;
-//         });
-
-//         it("has the correct provider", () => {
-//           const document: vscode.TextDocument = new;
-//           const position: vscode.Position = {};
-//           const cancellationToken: vscode.CancellationToken = {};
-//           const completionContext: vscode.CompletionContext = {};
-//         });
-//       });
-//     });
-//   });
-// });
+        expect(getTextBetweenImportAndCursor(line, cursorPosition)).toEqual(
+          './foo/bar.graphql"'
+        );
+      });
+    });
+  });
+});

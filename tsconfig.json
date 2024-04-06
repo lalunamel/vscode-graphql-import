@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "vscode": ["stubs/vscode.ts"]
+      "vscode": ["./mocks/vscode.ts"]
     }
   }
 }
