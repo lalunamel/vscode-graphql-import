@@ -63,23 +63,31 @@ const getCurrentFileDirectoryPath = (): AbsolutePath | undefined => {
 };
 
 /**
- * Finds all .graphql files within a specified directory.
- * @param {string} directory The directory in which to search for .graphql files.
- * @returns {Promise<vscode.Uri[]>} A promise that resolves to an array of Uri objects pointing to .graphql files.
+ * Finds all .graphql files and all directories within a specified directory.
+ * @param {string} path The directory in which to search for .graphql files and directories.
+ * @returns {Promise<vscode.Uri[]>} A promise that resolves to an array of Uri objects pointing to .graphql files and directories.
  */
-const findGraphqlFilesInDirectory = async (
-  directory: string | undefined
+const findGraphqlFilesAndDirectories = async (
+  path: string | undefined
 ): Promise<vscode.Uri[]> => {
-  if (directory === undefined) {
+  if (path === undefined) {
     return [];
   }
 
-  const pattern = new vscode.RelativePattern(directory, "*.graphql");
+  const dirUri = vscode.Uri.file(path);
+
   try {
-    const graphqlFiles = await vscode.workspace.findFiles(pattern);
-    return graphqlFiles;
+    const entries = await vscode.workspace.fs.readDirectory(dirUri);
+    const uris = entries
+      .filter(
+        ([name, type]) =>
+          type === vscode.FileType.Directory || name.endsWith(".graphql")
+      )
+      .map(([name]) => vscode.Uri.file(`${path}/${name}`));
+
+    return uris;
   } catch (error) {
-    console.error("Error finding .graphql files:", error);
+    console.error("Error finding .graphql files and directories:", error);
     return [];
   }
 };
@@ -116,8 +124,9 @@ const provideCompletionItems = async (
     // Join the two to create a path to search for graphql files
     const pathToSearch = path.join(currentFileDirectoryPath, enteredText);
 
-    // Get the GraphQL files at that path
-    const files = await findGraphqlFilesInDirectory(pathToSearch);
+    // Get the GraphQL files and folders at that path
+    const files = await findGraphqlFilesAndDirectories(pathToSearch);
+    console.log(files);
     // TODO: Also find folders at that path
 
     // Get just the last part (i.e. basename) of the files that were returned
