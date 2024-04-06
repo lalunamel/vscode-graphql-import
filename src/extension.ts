@@ -99,7 +99,7 @@ const findGraphqlFileAndDirectoryNames = async (
 
     return uris;
   } catch (error) {
-    console.error("Error finding .graphql files and directories:", error);
+    console.warn("Error finding .graphql files and directories:", error);
     return [];
   }
 };
