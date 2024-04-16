@@ -3,10 +3,8 @@ import path from "node:path";
 
 const GRAPHQL_LANGUAGE_IDENTIFIER = "graphql";
 const TRIGGER_CHARACTERS = ['"', "'", "/"];
-const URI_SCHEME_FILE = "file";
 
 type AbsolutePath = string;
-type RelativePath = string;
 
 type File = {
   name: string;
@@ -147,11 +145,9 @@ const provideCompletionItems = async (
     );
     return completionItems;
   }
-  return [new vscode.CompletionItem("foobar")];
 };
 
 export const activate = (context: vscode.ExtensionContext) => {
-  console.log("extension activated");
   let completionProvider = vscode.languages.registerCompletionItemProvider(
     GRAPHQL_LANGUAGE_IDENTIFIER,
     { provideCompletionItems },
