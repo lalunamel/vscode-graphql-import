@@ -2,7 +2,7 @@
 
 A VSCode extension to improve the experience of using the #import directive in GraphQL files.
 
-![extension demo](./extension-demo.gif)]
+![extension demo](https://github.com/lalunamel/vscode-graphql-import/blob/da5ce73c6c689ea753d89645d1e533dd81b9198d/extension-demo.gif)]
 
 ## Bugs or Suggestions
 
