@@ -4,6 +4,16 @@ A VSCode extension to improve the experience of using the #import directive in G
 
 ![extension demo](./extension-demo.gif)]
 
+## Bugs or Suggestions
+
+If you find a bug or have a suggestion, please create a github issue with the following:
+
+- Steps to reproduce the behavior
+- Expected behavior
+- Actual behavior
+
+If I don't respond within a few days, please ping me directly!
+
 ## TODO
 
 - [x] Provide completions for graphql imports based on the filesystem as you are typing

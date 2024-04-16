@@ -29,6 +29,7 @@
   "version": "0.0.1",
   "description": "A vscode extension to help with finding the right path to use with the #import expression in graphql files.",
   "displayName": "GraphQL #import",
+  "icon": "./icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/lalunamel/vscode-graphql-import"
